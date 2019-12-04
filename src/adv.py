@@ -1,6 +1,5 @@
 from room import Room
 from colorama import init, Fore, Back, Style
-
 init(convert=True)
 
 # Declare all the rooms
@@ -58,14 +57,20 @@ player_1 = Player(room["outside"])
 # If the user enters "q", quit the game.
 
 while True:
-    Style.DIM
-    print(Fore.CYAN + f"You are in {player_1.room.name}.")
-    # Style.RESET_ALL
-    print(Fore.GREEN + f"{player_1.room.description}")
+    print(Fore.GREEN + "==============")
+    if not player_1.name:
+        name = input("What is your name? ")
+        player_1.name = name
+    
+    print(Fore.CYAN + f"\nYou are in {player_1.room.name}.")
+    
+    print(f"\n{player_1.room.description}")
 
+    print(Fore.GREEN + "")
     cmd = input("What do you want to do? ")
 
-    if cmd == "q":
+    if cmd.lower() == "q" or cmd.lower() == "quit":
+        print(Fore.RED + f"\n{player_1.name} is quitting this game!")
         break
     else:
         player_1.move(cmd)

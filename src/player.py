@@ -18,9 +18,9 @@ class Player:
             str_dict = {"n": "north", "e": "east", "s": "south", "w": "west"}
             try:
                 self.room = getattr(self.room, f"{dir_str}_to")
-                print(Fore.CYAN + f"You move to the {str_dict[dir_str]}")
+                print(Fore.CYAN + f"\nYou move to the {str_dict[dir_str]}")
             except:
-                print(Fore.RED + f"{self.room.name} has no exits to {str_dict[dir_str]}")
+                print(Fore.RED + f"\n{self.room.name} has no exits to {str_dict[dir_str]}")
                 return
 
         if lower_dir == "north" or lower_dir == "n":
@@ -32,7 +32,7 @@ class Player:
         elif lower_dir == "west" or lower_dir == "w":
             check_and_move("w")
         else:
-            print(Fore.RED + f"{direction} is not a valid move")
+            print(Fore.RED + f"\n{direction} is not a valid move")
             return
 
         
