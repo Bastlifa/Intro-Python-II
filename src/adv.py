@@ -1,4 +1,7 @@
 from room import Room
+from item import Item
+from item import LightSource
+
 from colorama import init, Fore, Back, Style
 init(convert=True)
 
@@ -35,6 +38,11 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+# Populate rooms
+
+room['outside'].items.append(LightSource('Lamp', 'A small metal lamp with glass windows'))
+room['outside'].items.append(LightSource('Rope', 'Twisted hemp forms a long, flexible rope'))
+
 #
 # Main
 #
@@ -65,6 +73,16 @@ while True:
     print(Fore.CYAN + f"\nYou are in {player_1.room.name}.")
     
     print(f"\n{player_1.room.description}")
+
+    item_str = ""
+    for i in range(len(player_1.room.items)):
+        if i < len(player_1.room.items) - 1:
+            item_str += player_1.room.items[i].name + ', '
+        else:
+            item_str += player_1.room.items[i].name + '.'
+
+    if item_str:
+        print(f"\nIn the room, you see: " + Fore.YELLOW + f"{item_str}")
 
     print(Fore.GREEN + "")
     cmd = input("What do you want to do? ")
