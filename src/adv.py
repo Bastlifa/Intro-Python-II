@@ -1,4 +1,7 @@
 from room import Room
+from colorama import init, Fore, Back, Style
+
+init(convert=True)
 
 # Declare all the rooms
 
@@ -39,6 +42,10 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 
+from player import Player
+
+player_1 = Player(room["outside"])
+
 # Write a loop that:
 #
 # * Prints the current room name
@@ -49,3 +56,17 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+while True:
+    Style.DIM
+    print(Fore.CYAN + f"You are in {player_1.room.name}.")
+    # Style.RESET_ALL
+    print(Fore.GREEN + f"{player_1.room.description}")
+
+    cmd = input("What do you want to do? ")
+
+    if cmd == "q":
+        break
+    else:
+        player_1.move(cmd)
+
