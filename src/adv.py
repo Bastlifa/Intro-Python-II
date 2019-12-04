@@ -64,8 +64,15 @@ player_1 = Player(room["outside"])
 #
 # If the user enters "q", quit the game.
 
+print(Fore.YELLOW + '''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(                                     ) 
+)            Python Quest             (
+(                                     )
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~''')
+
 while True:
-    print(Fore.GREEN + "==============")
+    print(Fore.GREEN + "=======================================")
     if not player_1.name:
         name = input("What is your name? ")
         player_1.name = name
