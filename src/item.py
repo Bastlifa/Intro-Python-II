@@ -29,3 +29,10 @@ class LightSource(Item):
         print(Style.RESET_ALL)
         player.room.items.append(self)
         player.inventory.remove(self)
+
+class Weapon(Item):
+    def __init__(self, name, description, dmg, dmg_type):
+        super().__init__(name, description)
+        self.dmg = dmg
+        self.type = dmg_type
+

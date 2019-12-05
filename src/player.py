@@ -23,6 +23,7 @@ class Player:
         self.name = ""
         self.room = room
         self.inventory = []
+        self.hp = 100
 
     def move(self, direction):
         lower_dir = direction.lower()
