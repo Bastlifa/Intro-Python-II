@@ -11,6 +11,7 @@ class Player:
     def __init__(self, room):
         self.name = ""
         self.room = room
+        self.inventory = []
 
     def move(self, direction):
         lower_dir = direction.lower()
@@ -37,4 +38,14 @@ class Player:
             print(Fore.RED + f"\n{direction} is not a valid move")
             return
 
-        
+    def get_item(self, item):
+        item.on_take(self)
+
+    def check_inventory(self):
+        print(Fore.YELLOW + f"\n{self.name} has the following items:")
+        for item in self.inventory:
+            print(Fore.YELLOW + f"{item.name}")
+        print(Style.RESET_ALL)
+    
+    def drop_item(self,item):
+        item.on_drop(self)

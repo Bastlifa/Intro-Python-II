@@ -9,7 +9,7 @@ init(convert=True)
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mouth beckons"),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -41,7 +41,7 @@ room['treasure'].s_to = room['narrow']
 # Populate rooms
 
 room['outside'].items.append(LightSource('Lamp', 'A small metal lamp with glass windows'))
-room['outside'].items.append(LightSource('Rope', 'Twisted hemp forms a long, flexible rope'))
+room['outside'].items.append(Item('Rope', 'Twisted hemp forms a long, flexible rope'))
 
 #
 # Main
@@ -64,6 +64,42 @@ player_1 = Player(room["outside"])
 #
 # If the user enters "q", quit the game.
 
+game_running = True
+
+def input_process(input_str):
+    lower_input = input_str.lower()
+
+    if lower_input == 'q' or lower_input == 'quit':
+        print(Fore.RED + f"\n{player_1.name} is quitting this game!")
+        global game_running
+        game_running = False
+    elif lower_input in ['n', 'north', 'e', 'east', 's', 'south', 'w', 'west']:
+        player_1.move(lower_input)
+    elif len(lower_input.split()) > 1:
+        verb_noun(lower_input.split())
+    else:
+        print(Fore.RED + "\nThat command is not valid.")
+        print(Style.RESET_ALL)
+
+def verb_noun(cmd_list):
+    if cmd_list[0] == "get":
+        item_names = []
+        for item in player_1.room.items:
+            item_names.append(item.name.lower())
+        if cmd_list[1] in item_names:
+            player_1.get_item(player_1.room.items[item_names.index(cmd_list[1])])
+        else:
+            print("")
+    elif cmd_list[0] == "check" and cmd_list[1] == "inventory":
+        player_1.check_inventory()
+    elif cmd_list[0] == "drop":
+        item_names = []
+        for item in player_1.inventory:
+            item_names.append(item.name.lower())
+        if cmd_list[1] in item_names:
+            player_1.drop_item(player_1.inventory[item_names.index(cmd_list[1])])
+
+
 print(Fore.YELLOW + '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 (                                     ) 
@@ -71,7 +107,7 @@ print(Fore.YELLOW + '''
 (                                     )
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~''')
 
-while True:
+while game_running:
     print(Fore.GREEN + "=======================================")
     if not player_1.name:
         name = input("What is your name? ")
@@ -94,9 +130,5 @@ while True:
     print(Fore.GREEN + "")
     cmd = input("What do you want to do? ")
 
-    if cmd.lower() == "q" or cmd.lower() == "quit":
-        print(Fore.RED + f"\n{player_1.name} is quitting this game!")
-        break
-    else:
-        player_1.move(cmd)
+    input_process(cmd)
 
