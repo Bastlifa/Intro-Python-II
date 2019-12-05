@@ -2,16 +2,28 @@
 # currently.
 
 from room import Room
-from playsound import playsound
+from item import LightSource
 
+from playsound import playsound
 from colorama import init, Fore, Back, Style
 init(convert=True)
+
+def lit_area(player):
+    for item in player.inventory + player.room.items:
+        if isinstance(item, LightSource):
+            return True
+    
+    if player.room.lit:
+        return True
+    
+    return False
 
 class Player:
     def __init__(self, room):
         self.name = ""
         self.room = room
         self.inventory = []
+        self.last_item = None
 
     def move(self, direction):
         lower_dir = direction.lower()
@@ -19,11 +31,19 @@ class Player:
         def check_and_move(dir_str):
             str_dict = {"n": "north", "e": "east", "s": "south", "w": "west"}
             try:
-                self.room = getattr(self.room, f"{dir_str}_to")
-                playsound('./assets/game_sounds/footsteps.mp3')
-                print(Fore.CYAN + f"\nYou move to the {str_dict[dir_str]}")
+                if getattr(self.room, f"{dir_str}_to") != None:
+                    self.room = getattr(self.room, f"{dir_str}_to")
+                    print(Fore.CYAN + f"\nYou move to the {str_dict[dir_str]}")
+                    playsound('./assets/game_sounds/footsteps.mp3', False)
+                else:
+                    raise("")
             except:
-                print(Fore.RED + f"\n{self.room.name} has no exits to the {str_dict[dir_str]}")
+                if lit_area(self):
+                    print(Fore.RED + f"\n{self.room.name} has no exits to the {str_dict[dir_str]}")
+                    playsound('./assets/game_sounds/buzz.mp3', False)
+                else:
+                    print(Fore.RED + f"\nThere are no exits that way!")
+                    playsound('./assets/game_sounds/buzz.mp3', False)
                 return
 
         if lower_dir == "north" or lower_dir == "n":
@@ -36,6 +56,7 @@ class Player:
             check_and_move("w")
         else:
             print(Fore.RED + f"\n{direction} is not a valid move")
+            playsound('./assets/game_sounds/buzz.mp3', False)
             return
 
     def get_item(self, item):
