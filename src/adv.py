@@ -26,6 +26,12 @@ to north. The smell of gold permeates the air.""", False),
 chamber! Sadly, it has already been completely emptied by
 earlier adventurers. Next to the chest, you see an old grappling hook.
 The only exit is to the south.""", False),
+    'fountain': Room("Fountain", """You find yourself in a marble-floored room
+with a fountain in the center. The water gives off a faint light.
+There are exits to the north, and west, and south crosses a chasm""", True),
+    'armory': Room("Armory", """You enter an old armory. 
+Most of the weapons have been long-removed.
+The only exit is to the east.""", False)
 }
 
 
@@ -40,12 +46,17 @@ room['overlook'].n_to = None
 room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
+room['fountain'].s_to = None
+room['fountain'].w_to = room['armory']
+room['fountain'].n_to = None
+room['armory'].e_to = room['fountain']
 
 # Populate rooms
 
 room['outside'].items.append(LightSource('Lamp', 'A small metal lamp with glass windows'))
 room['outside'].items.append(Item('Rope', 'Twisted hemp forms a long, flexible rope'))
 room['treasure'].items.append(Item('Grappling Hook', 'A metal hook, with three prongs'))
+room['armory'].items.append(Item('Rusty Sword', 'A metal sword, rusty from long neglect'))
 
 #
 # Main
@@ -57,6 +68,7 @@ from player import Player
 
 player_1 = Player(room["outside"])
 
+last_item = None
 # Write a loop that:
 #
 # * Prints the current room name
@@ -94,11 +106,17 @@ def verb_noun(cmd_list):
         for item in player_1.room.items:
             item_names.append(item.name.lower())
         cmd_list.pop(0)
-        if ' '.join(cmd_list) in item_names:
+        global last_item
+        if last_item == None:
+            print("get what?")
+            playsound('./assets/game_sounds/buzz.mp3')
+        elif ' '.join(cmd_list) in item_names:
             player_1.get_item(player_1.room.items[item_names.index(' '.join(cmd_list))])
+            last_item = player_1.room.items[item_names.index(' '.join(cmd_list))]
             playsound('./assets/game_sounds/coin.mp3')
-        elif cmd_list[0] == "it" and player_1.last_item.name.lower() in item_names:
-            player_1.get_item(player_1.room.items[item_names.index(player_1.last_item.name.lower())])
+        elif cmd_list[0] == "it" and last_item.name.lower() in item_names:
+            last_item = player_1.room.items[item_names.index(last_item.name.lower())]
+            player_1.get_item(player_1.room.items[item_names.index(last_item.name.lower())])
             playsound('./assets/game_sounds/coin.mp3')
         else:
             print("get what?")
@@ -110,10 +128,14 @@ def verb_noun(cmd_list):
         for item in player_1.inventory:
             item_names.append(item.name.lower())
         cmd_list.pop(0)
-        if ' '.join(cmd_list) in item_names:
+        if last_item == None:
+            print("drop what?")
+            playsound('./assets/game_sounds/buzz.mp3')
+        elif ' '.join(cmd_list) in item_names:
+            last_item = player_1.inventory[item_names.index(' '.join(cmd_list))]
             player_1.drop_item(player_1.inventory[item_names.index(' '.join(cmd_list))])
-        elif cmd_list[0] == "it" and player_1.last_item.name.lower() in item_names:
-            player_1.drop_item(player_1.inventory[item_names.index(player_1.last_item.name.lower())])
+        elif cmd_list[0] == "it" and last_item.name.lower() in item_names:
+            player_1.drop_item(player_1.inventory[item_names.index(last_item.name.lower())])
             playsound('./assets/game_sounds/coin.mp3')
         else:
             print("drop what?")
@@ -126,9 +148,14 @@ def verb_noun(cmd_list):
 def situation_process():
     inventory_names = []
     for item in player_1.inventory:
-        inventory_names.append(item.name)
+        inventory_names.append(item.name.lower())
 
-    
+    if "rope" in inventory_names and "grappling hook" in inventory_names:
+        room['overlook'].n_to = room["fountain"]
+        room['fountain'].s_to = room["overlook"]
+    else:
+        room['overlook'].n_to = None
+        room['fountain'].s_to = None
 
 print(Fore.YELLOW + '''
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,6 +188,8 @@ while game_running:
                 item_str += player_1.room.items[i].name + ', '
             else:
                 item_str += player_1.room.items[i].name + '.'
+                # global last_item
+                last_item = player_1.room.items[i]
 
         if item_str:
             print(f"\nIn the room, you see: " + Fore.YELLOW + f"{item_str}")

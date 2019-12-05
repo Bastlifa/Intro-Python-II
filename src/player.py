@@ -23,7 +23,6 @@ class Player:
         self.name = ""
         self.room = room
         self.inventory = []
-        self.last_item = None
 
     def move(self, direction):
         lower_dir = direction.lower()
@@ -32,9 +31,15 @@ class Player:
             str_dict = {"n": "north", "e": "east", "s": "south", "w": "west"}
             try:
                 if getattr(self.room, f"{dir_str}_to") != None:
-                    self.room = getattr(self.room, f"{dir_str}_to")
-                    print(Fore.CYAN + f"\nYou move to the {str_dict[dir_str]}")
-                    playsound('./assets/game_sounds/footsteps.mp3', False)
+                    if (self.room.name == "Grand Overlook" and dir_str == "n")\
+                    or (self.room.name == "Fountain" and dir_str == "s"):
+                        self.room = getattr(self.room, f"{dir_str}_to")
+                        print(Fore.CYAN + f"\nYou use your rope and grappling hook to cross the chasm!")
+                        playsound('./assets/game_sounds/footsteps.mp3', False)
+                    else:
+                        self.room = getattr(self.room, f"{dir_str}_to")
+                        print(Fore.CYAN + f"\nYou move to the {str_dict[dir_str]}")
+                        playsound('./assets/game_sounds/footsteps.mp3', False)
                 else:
                     raise("")
             except:

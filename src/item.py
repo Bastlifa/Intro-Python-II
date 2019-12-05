@@ -11,7 +11,6 @@ class Item:
         print(Style.RESET_ALL)
         player.room.items.remove(self)
         player.inventory.append(self)
-        player.last_item = self
 
     def on_drop(self, player):
         print(Fore.YELLOW + f"\n{player.name} has dropped {self.name}")
