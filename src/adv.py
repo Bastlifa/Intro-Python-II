@@ -77,6 +77,8 @@ def input_process(input_str):
         player_1.move(lower_input)
     elif len(lower_input.split()) > 1:
         verb_noun(lower_input.split())
+    elif lower_input == "i" or lower_input = "inventory":
+        player_1.check_inventory()
     else:
         print(Fore.RED + "\nThat command is not valid.")
         print(Style.RESET_ALL)
